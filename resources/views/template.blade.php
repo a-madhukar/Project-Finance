@@ -1,0 +1,5 @@
+@include('templates.planExpenditures')
+@include('templates.budgets')
+@include('templates.displayDailyExpenses')
+@include('templates.expensesList')
+@include('templates.trackExpenses')
