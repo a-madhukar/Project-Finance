@@ -10,7 +10,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::resource('dailyexpense','DailyExpenseController'); 
     Route::get('budgets/{budgetId}/{category}','DailyExpenseController@listRelatedExpenses');
 
-    Route::get('track','TrackExpensesController@display'); 
+    Route::get('track','TrackExpensesController@display');
+    Route::get('monthlydata/{id}','TrackExpensesController@getMonthlyData');  
 
 });
  

@@ -176,18 +176,85 @@ Vue.component('track-expenses',{
 	data:function()
 	{
 		return {
-			monthlyExpensesChart:
-			{
-				labels:[], 
-				datasets:
-				[
+			PieChartData:[], 
 
-				]
-			}
 		}; 
 	}, 
 
 	methods:{
+		checkIfUndefined:function(variable)
+		{	
+			return typeof variable==undefined ? true:false; 
+		}, 
+
+		getFirstElement:function()
+		{
+			return this.budgets_list[0]; 
+		}, 
+
+		getMonthlyData:function(id)
+		{
+			this.$http.get('monthlydata/'+id)
+			.then(function(response,status,headers,config)
+			{
+				console.log("success getting monthly data");
+
+				this.setupPieChartData(response.data);
+				var ctx = $("#myChart").get(0).getContext("2d");
+				var myPieChart = new Chart(ctx).Pie(this.PieChartData);  
+			},
+			function(error,status,headers,config)
+			{
+				console.log("error"); 
+			}); 
+		}, 
+
+		randomColor:function()
+		{
+			var colors = [
+			'red',
+			'blue',
+			'grey',
+			'aqua',
+			'green',
+			'black'
+			]; 
+
+			console.log("returning random color");
+			console.log(colors[this.randomNumber()]);  
+			return colors[this.randomNumber()]; 
+		}, 
+
+		randomNumber:function()
+		{
+			console.log("generating random number");
+			console.log(" "+Math.floor(Math.random() *5)); 
+
+			return Math.floor(Math.random() * 5); 
+		},
+
+		setupPieChartData:function(data)
+		{
+			console.log("setting up the pie chart data");
+
+			var pieData = []; 
+
+			for (var i = data.length - 1; i >= 0; i--) 
+			{
+				pieData.push({
+					value:data[i].total_spent, 
+					// color:'red',
+					// highlight:'blue', 
+					color:this.randomColor(),
+					highlight:this.randomColor(), 
+					label:data[i].category 
+				}); 
+			}
+
+			this.PieChartData = pieData; 
+
+		}
+
 
 	}, 
 
@@ -229,7 +296,15 @@ Vue.component('track-expenses',{
 		// // This will get the first returned node in the jQuery collection.
 		// var myLineChart = new Chart(ctx).Bar(data,options);
 		// console.log(myLineChart.generateLegend()); 
-		console.log(" "+this.budgets_list); 
+		
+		if (!this.checkIfUndefined(this.budgets_list)) 
+		{
+			console.log(this.getFirstElement().name+" is selected!"); 
+
+			this.getMonthlyData(this.getFirstElement().id); 
+
+
+		}
 
 	},
 
